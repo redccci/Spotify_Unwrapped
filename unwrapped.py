@@ -491,6 +491,9 @@ To see the full story of music today, we need to hear it from everywhere.""",
                             # Scatter Plot
                             html.Div(
                                 [
+html.P("""Imagine you're a music detective with a scatterplot as your tool. Each point on the plot represents a song, with features like tempo on one axis and energy on the other. As you zoom in, you see clusters forming—high-energy songs are grouped together, and slower ones have their own space. The scatterplot helps you spot trends, like which audio features make songs more popular, and predict which tracks might be the next big hit. It's your map to cracking the code of music popularity!""",
+       className="chart-description"),
+
                                     html.H4("Song Popularity vs. Audio Features", id="scatter"),
                                     dbc.Row(
                                         [
