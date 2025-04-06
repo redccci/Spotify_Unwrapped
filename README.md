@@ -72,7 +72,7 @@ The dataset (`universal_top_spotify_songs.rar`) contains information such as:
 
 ## 🧠 Author
 
-**Edmar Dizon**  
+**Jonalaine Aporado, Edmar Dizon, John Carlo Gonzales, Tyrone Victor Garcia, Vince Jefferson Tadeo, Wilson Tang**  
 Project under: *SPOTIFY "Unwrapped"*  
 GitHub: [@redccci](https://github.com/redccci)
 
