@@ -26,8 +26,6 @@ df['track_id'] = df['name'].astype(str)
 top_artists = df['artists'].dropna().unique()
 top_tracks = df['track_id'].dropna().unique()
 
-px.set_mapbox_access_token(open(".mapbox_token").read())
-
 # Dash app setup with external CSS
 app = dash.Dash(
     __name__, 
@@ -63,7 +61,8 @@ app.layout = html.Div([
                     html.Div(
                         html.Img(
                             src="assets/Spotify Unwrapped.png",
-                            className="spotify-logo"
+                            className="spotify-logo",
+                            style={'width': 'auto', 'height': 'auto'}
                         ),
                         className="logo-container",
                         style={'maxWidth': '100%', 'maxHeight': '100%'}
@@ -141,12 +140,13 @@ app.layout = html.Div([
                         html.Img(
                             src="assets/Side_bar.png",
                             className="sidebar-image",
-                            style={'width': '50%'}
+                            style={'width': '25%'}
                         ),
                         className="sidebar-playlists"
                     )
                 ],
-                className="sidebar-content"
+                className="sidebar-content",
+                style={'width': 'auto'}  # Set width to automatic
             )
         ],
         className="sidebar d-none d-md-block"
@@ -246,7 +246,13 @@ app.layout = html.Div([
                             # Problem Statement
                             html.Div(
                                 [
-                                    html.H3("Problem Statement"),
+                                    html.H3("Why we are doing this?"),
+                                    html.Div(
+                                        [
+                                            html.P("“Music is the universal language of mankind.” - Henry Wadsworth Longfellow"),
+                                        ],
+                                        className="quote-text"
+                                    ),
                                     dbc.Row(
                                         [
                                             dbc.Col(
@@ -261,20 +267,18 @@ app.layout = html.Div([
                                             ),
                                             dbc.Col(
                                                 html.P([
-                                                    "As Henry Wadsworth Longfellow said, music is a universal language, transcending barriers and "
-                                                    "connecting people worldwide. Music trends reflect cultural and technological changes, with new genres "
-                                                    "emerging and evolving through digital platforms. What makes a song successful today isn't just radio play— "
-                                                    "it's viral moments on platforms like TikTok and Spotify. By understanding these trends, we see how music "
-                                                    "shapes and mirrors societal changes, continuing to be a powerful tool for expression and connection.",
+                                                    """In 2024–2025, music is shaped more than ever by digital platforms.
+                                                    It’s no longer just radio play—TikTok trends and Spotify streams now drive a song’s success. 
+                                                    It's viral moments on platforms like TikTok and Spotify. By understanding these trends, we see how music 
+                                                    shapes and mirrors societal changes, continuing to be a powerful tool for expression and connection.""",
                                                     html.Br(),
                                                     html.Br(),
-                                                    "• What happens to song popularity over the years? Has it increased or decreased? Why might this be?",
+                                                    "• How has song popularity changed over the years?",
                                                     html.Br(),
-                                                    "• How did the popularity of different music genres evolve from 2000 to 2019?",
+                                                    "• How have music genres evolved today?",
                                                     html.Br(),
-                                                    "• Audio Feature Analysis: What are the average audio feature values (e.g., BPM, energy, danceability)" 
-                                                    "  for top songs each year?"
-                                                ],className="problem-text"),
+                                                    "• What makes a hit song today?"
+                                                ], className="problem-text"),
                                                 width=9, md=10
                                             )
                                         ],
@@ -312,7 +316,7 @@ app.layout = html.Div([
                                                     input_style={"margin-right": "5px"}  # Correct property for input styling
                                                 )
                                             ],
-                                            className="control-group",id="search"
+                                            className="control-group", id="search"
                                         ),
                                         
                                         # Entity Dropdown
@@ -321,10 +325,10 @@ app.layout = html.Div([
                                                 html.Label("Select Song/Artist:", className="control-label"),
                                                 dcc.Dropdown(
                                                     id='entity-dropdown',
-                                                        style={
-                                                            'backgroundColor': '#000000',
-                                                            'color': '#FFFFFF'
-                                                        }
+                                                    style={
+                                                        'backgroundColor': '#000000',
+                                                        'color': '#FFFFFF'
+                                                    }
                                                 )
                                             ],
                                             className="control-group"
@@ -382,14 +386,48 @@ app.layout = html.Div([
                             
                             # Visualizations Column
                             dbc.Col(
+                            # Instructions for Using the Visualizations
+                            html.Div(
+                                [
+                                    html.H4("Instructions for Using the Visualizations"),
+                                    html.P(
+                                        "1. View Type Selection: Choose whether you want to analyze data by **Song** or **Artist**. "
+                                        "Select your preference using the radio buttons."
+                                    ),
+                                    html.P(
+                                        "2. Entity Selection: After selecting the view type, choose a specific song or artist from the dropdown. "
+                                        "The options will update based on your selection."
+                                    ),
+                                    html.P(
+                                        "3. Date Range Selection: Use the date pickers to filter the data by a specific date range. "
+                                        "Make sure the selected dates are within the available data range."
+                                    ),
+                                    html.P(
+                                        "4. Visualizations Update: The visualizations will automatically update based on your selections. "
+                                        "You will see a choropleth map showing global music popularity and a line chart displaying the popularity trend over time."
+                                    ),
+                                   
+                                ],
+                                className="content-section",
+                                style={"marginBottom": "20px"}
+                            ),
+                            width="auto", md=8
+                            ),
+
+                            dbc.Row(
                                 [
                                     # Choropleth Map
                                     html.Div(
                                         [
+                                            html.P("In 2024–2025, music spreads faster than ever—thanks to TikTok, Spotify, and global streaming. But what’s trending in one region might not even make waves in another. "
+"Studying music popularity by region helps us understand cultural preferences, emerging local trends, and how global hits travel. It shows us how music connects the world—one region at a time. "
+"To see the full story of music today, we need to hear it from everywhere.",
+                                                     className="chart-description"),
+                                            # Map Title
                                             html.H4("Global Music Popularity by Region", id="region"),
                                             dcc.Graph(id='choropleth-map', className="visualization-container"),
                                             html.P(
-                                                "The choropleth map visualizes popularity across different regions, with darker colors indicating higher popularity.",
+"The choropleth map displays global music popularity by country for the years 2024–2025, using a color gradient to represent average popularity scores. Countries are shaded from dark blue to bright yellow, where dark blue indicates lower popularity scores (around 25) and yellow represents higher scores (above 50). This visual highlights regional differences in music engagement, offering insights into where music is most popular across the world during this period.",
                                                 className="chart-description"
                                             )
                                         ],
@@ -399,17 +437,20 @@ app.layout = html.Div([
                                     # Line Chart
                                     html.Div(
                                         [
+html.P("""Music trends change fast. Studying popularity over time helps us understand how listener tastes evolve, which songs have lasting impact, and how tech and culture shape what we hear.
+Studying music popularity by region helps us understand cultural preferences, emerging local trends, and how global hits travel. It shows us how music connects the world—one region at a time.
+To see the full story of music today, we need to hear it from everywhere.""",
+       className="chart-description"),
                                             html.H4("Popularity Trend Over Time", id="popularity"),
                                             dcc.Graph(id='line-chart', className="visualization-container"),
                                             html.P(
-                                                "This line graph tracks how audio features like danceability and energy have changed over time for the selected songs.",
+                                                "This line graph tracks how artist or music have changes over time based from the date indicated in data control.",
                                                 className="chart-description"
                                             )
                                         ],
                                         className="content-section"
                                     )
                                 ],
-                                #width=12, md=8
                             )
                         ],
                         className="mt-4"
@@ -421,23 +462,23 @@ app.layout = html.Div([
                             # Bar Chart
                             html.Div(
                                 [
-                                    html.H4("Top Songs by Selected Audio Feature",id="feature"),
+                                    html.H4("Top Songs by Selected Audio Feature", id="feature"),
                                     # Audio Feature Dropdown
-                                            html.Div(
-                                                [
-                                                    html.Label("Audio Feature:", className="control-label"),
-                                                    dcc.Dropdown(
-                                                        id='bar-attribute',
-                                                        options=[{'label': a, 'value': a} for a in audio_features],
-                                                        value='energy',
-                                                        style={
-                                                                'backgroundColor': '#000000',
-                                                                'color': '#FFFFFF'
-                                                            }
-                                                    )
-                                                ],
-                                                className="control-group mb-3"
-                                            ),
+                                    html.Div(
+                                        [
+                                            html.Label("Audio Feature:", className="control-label"),
+                                            dcc.Dropdown(
+                                                id='bar-attribute',
+                                                options=[{'label': a, 'value': a} for a in audio_features],
+                                                value='energy',
+                                                style={
+                                                    'backgroundColor': '#000000',
+                                                    'color': '#FFFFFF'
+                                                }
+                                            )
+                                        ],
+                                        className="control-group mb-3"
+                                    ),
                                     dcc.Graph(id='bar-chart', className="visualization-container"),
                                     html.P(
                                         "This bar chart shows the top songs based on the selected audio feature.",
@@ -450,7 +491,7 @@ app.layout = html.Div([
                             # Scatter Plot
                             html.Div(
                                 [
-                                    html.H4("Song Popularity vs. Audio Features",id="scatter"),
+                                    html.H4("Song Popularity vs. Audio Features", id="scatter"),
                                     dbc.Row(
                                         [
                                             dbc.Col(
@@ -459,9 +500,9 @@ app.layout = html.Div([
                                                     options=[{'label': a, 'value': a} for a in audio_features],
                                                     value='danceability',
                                                     style={
-                                                            'backgroundColor': '#000000',
-                                                            'color': '#FFFFFF'
-                                                        }
+                                                        'backgroundColor': '#000000',
+                                                        'color': '#FFFFFF'
+                                                    }
                                                 ),
                                                 width=6
                                             ),
@@ -471,9 +512,9 @@ app.layout = html.Div([
                                                     options=[{'label': a, 'value': a} for a in audio_features],
                                                     value='energy',
                                                     style={
-                                                            'backgroundColor': '#000000',
-                                                            'color': '#FFFFFF'
-                                                        }
+                                                        'backgroundColor': '#000000',
+                                                        'color': '#FFFFFF'
+                                                    }
                                                 ),
                                                 width=6
                                             )
@@ -498,43 +539,42 @@ app.layout = html.Div([
     ),
 
     # About US
-       
     html.Div(
-    [
-        html.H2("About the Developers", style={
-            "fontSize": "22px",
-            "marginBottom": "20px",
-            "color": "#1DB954"  # Spotify green for a pop of color
-        }),
+        [
+            html.H2("About the Developers", style={
+                "fontSize": "22px",
+                "marginBottom": "20px",
+                "color": "#1DB954"  # Spotify green for a pop of color
+            }),
 
-        html.Ul(
-            [
-                html.Li("Jonalaine Aporado"),
-                html.Li("Edmar Dizon"),
-                html.Li("John Carlo Gonzales"),
-                html.Li("Tyrone Victor Garcia"),
-                html.Li("Vince Jefferson Tadeo"),
-                html.Li("Wilson Tang")
-            ],
-            style={
-                "listStyleType": "none",
-                "padding": 0,
-                "margin": 0,
-                "fontSize": "14px",
-                "color": "#FFFFFF",
-                "lineHeight": "2"
-            }
-        )
-    ],
-    id="about-section",
-    style={
-        "backgroundColor": "#121212",
-        "textAlign": "center",
-        "padding": "40px 20px",
-        "borderTop": "2px solid #1DB954",
-        "marginTop": "60px"
-    }
-),
+            html.Ul(
+                [
+                    html.Li("Jonalaine Aporado"),
+                    html.Li("Edmar Dizon"),
+                    html.Li("John Carlo Gonzales"),
+                    html.Li("Tyrone Victor Garcia"),
+                    html.Li("Vince Jefferson Tadeo"),
+                    html.Li("Wilson Tang")
+                ],
+                style={
+                    "listStyleType": "none",
+                    "padding": 0,
+                    "margin": 0,
+                    "fontSize": "14px",
+                    "color": "#FFFFFF",
+                    "lineHeight": "2"
+                }
+            )
+        ],
+        id="about-section",
+        style={
+            "backgroundColor": "#121212",
+            "textAlign": "center",
+            "padding": "40px 20px",
+            "borderTop": "2px solid #1DB954",
+            "marginTop": "60px"
+        }
+    ),
  
     # Player Bar
     html.Div(
@@ -574,6 +614,9 @@ app.layout = html.Div([
     Input('view-radio', 'value')
 )
 def update_dropdown(view_type):
+    """
+    Update the dropdown options based on the selected view type (Song or Artist).
+    """
     if view_type == 'song':
         options = [{'label': name, 'value': name} for name in sorted(top_tracks)]
         return options, options[0]['value']
@@ -590,6 +633,9 @@ def update_dropdown(view_type):
     Input('end-date', 'date')
 )
 def update_visuals(view, entity, start_date, end_date):
+    """
+    Update the choropleth map and line chart based on the selected view, entity, and date range.
+    """
     # Convert string dates to datetime
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
@@ -643,6 +689,9 @@ def update_visuals(view, entity, start_date, end_date):
     Input('bar-attribute', 'value')
 )
 def update_bar_chart(attribute):
+    """
+    Update the bar chart based on the selected audio feature.
+    """
     # Handle None or invalid attribute
     if attribute is None or attribute not in df.columns:
         # Return empty figure with same styling using px
@@ -713,6 +762,9 @@ def update_bar_chart(attribute):
     Input('y-attribute', 'value')
 )
 def update_scatter(x_attr, y_attr):
+    """
+    Update the scatter plot based on the selected x and y audio features.
+    """
     fig = px.scatter(df, x=x_attr, y=y_attr, color='popularity', color_continuous_scale='cividis',
                      hover_name='artists', 
                      title=f"{x_attr.capitalize()} vs {y_attr.capitalize()}")
