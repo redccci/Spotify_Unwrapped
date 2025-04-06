@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Unwrapped</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+        }
+        .navbar {
+            background-color: #1DB954; /* Spotify green */
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #282828; /* Dark background for sections */
+            border-radius: 8px;
+        }
+        footer {
+            background-color: #1DB954;
+            padding: 10px;
+            text-align: center;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">Spotify Unwrapped</a>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Storytelling Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section">
+                    <h5>Storytelling</h5>
+                    <p>
+                        Welcome to Spotify Unwrapped! Explore trends and popularity of your favorite songs and artists from January–March 2024.
+                        The dashboard helps you understand how audio features like danceability, energy, and tempo impact music popularity.
+                    </p>
+                    <p>
+                        Use the controls to select a song/artist, pick a date range, and interact with visualizations. The choropleth map shows country-level popularity, while the line graph tracks trends over time.
+                    </p>
+                    <p>
+                        Dive deeper into audio features with the bar chart, and uncover correlations between them using the scatter plot.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="section">
+                    <h5>Select Song/Artist:</h5>
+                    <select id="song-artist-dropdown" class="form-control">
+                        <option value="song1">Song 1</option>
+                        <option value="song2">Song 2</option>
+                        <option value="artist1">Artist 1</option>
+                        <option value="artist2">Artist 2</option>
+                    </select>
+
+                    <h5 class="mt-3">Select Date Range:</h5>
+                    <input type="date" id="start-date" class="form-control" value="2024-01-01">
+                    <input type="date" id="end-date" class="form-control mt-2" value="2024-03-31">
+
+                    <h5 class="mt-3">Select Type:</h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="type" id="song" value="song" checked>
+                        <label class="form-check-label" for="song">Song</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="type" id="artist" value="artist">
+                        <label class="form-check-label" for="artist">Artist</label>
+                    </div>
+
+                    <h5 class="mt-3">Select Audio Feature for Bar Chart:</h5>
+                    <select id="audio-feature-dropdown" class="form-control">
+                        <option value="danceability">Danceability</option>
+                        <option value="tempo">Tempo</option>
+                        <option value="energy">Energy</option>
+                    </select>
+
+                    <h5 class="mt-3">Scatter Plot Axes:</h5>
+                    <div class="row">
+                        <div class="col">
+                            <select id="x-axis-dropdown" class="form-control">
+                                <option value="energy">Energy</option>
+                                <option value="danceability">Danceability</option>
+                                <option value="tempo">Tempo</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <select id="y-axis-dropdown" class="form-control">
+                                <option value="energy">Energy</option>
+                                <option value="danceability">Danceability</option>
+                                <option value="tempo">Tempo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <!-- Choropleth Map -->
+                <div class="section">
+                    <h5>Choropleth Map (Popularity by Country)</h5>
+                    <div id="choropleth-map" style="height: 400px;"></div>
+                    <p>
+                        The choropleth map visualizes the popularity of the selected song or artist across countries. Darker shades indicate higher popularity.
+                        This map dynamically updates based on your selection and is linked to the line graph for contextual trends.
+                    </p>
+                </div>
+
+                <!-- Line Graph -->
+                <div class="section">
+                    <h5>Line Graph (Trend of Audio Features)</h5>
+                    <div id="line-graph" style="height: 400px;"></div>
+                    <p>
+                        The line graph shows the trends of audio features like danceability, energy, and tempo, comparing week-to-week or month-to-month changes from January–March 2024.
+                        This feature helps to analyze the evolution of song or artist characteristics and their relationship with geographic popularity.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section">
+                    <h5>Bar Chart (Popularity by Audio Feature)</h5>
+                    <div id="bar-chart" style="height: 400px;"></div>
+                    <p>
+                        The bar chart visualizes the average popularity of the selected song or artist based on the chosen audio feature.
+                        This helps you understand which features contribute most to the popularity during early 2024.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scatter Plot -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section">
+                    <h5>Scatter Plot (Correlation Between Audio Features)</h5>
+                    <div id="scatter-plot" style="height: 400px;"></div>
+                    <p>
+                        The scatter plot reveals the correlations between audio features (e.g., Energy vs. Danceability).
+                        It includes a color gradient to encode an additional variable, such as popularity or another audio feature.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <footer>
+            <p>&copy; 2024 Spotify Unwrapped. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
