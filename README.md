@@ -23,7 +23,7 @@ cd Spotify_Unwrapped
 
 ### 2. Extract the Dataset
 
-Make sure to extract `universal_top_spotify_songs.rar` into the project folder. You can use WinRAR, 7-Zip, or any archive tool.
+Make sure to extract universal_top_spotify_songs.rar into the project folder. You can use WinRAR, 7-Zip, or any archive tool of your choice. Ensure that the extracted CSV file is in the same directory as the .py file.
 
 ### 3. Install Required Libraries
 
