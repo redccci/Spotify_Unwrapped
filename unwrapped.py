@@ -1,9 +1,10 @@
+
 import dash
 from dash import dcc, html, Input, Output
 import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
-import os
+from flask_caching import Cache
 
 # Load dataset
 df = pd.read_csv("universal_top_spotify_songs.csv")
@@ -36,12 +37,10 @@ app = dash.Dash(
 )
 app.title = "Spotify Unwrapped"
 
-# Load your custom CSS
-app.css.append_css({
-    "external_url": "/assets/style.css"  # Make sure to create an assets folder
-})
+# Caching setup
+cache = Cache(app.server, config={'CACHE_TYPE': 'simple'})
 
-# App layout with Spotify-style design
+# App layout
 app.layout = html.Div([
     # DLSU Logo Overlay
     html.Div(
@@ -140,7 +139,7 @@ app.layout = html.Div([
                         html.Img(
                             src="assets/Side_bar.png",
                             className="sidebar-image",
-                            style={'width': '25%'}
+                            style={'width': '50%'}
                         ),
                         className="sidebar-playlists"
                     )
@@ -197,40 +196,6 @@ app.layout = html.Div([
                     )
                 ],
                 className="navbar navbar-dark"
-            ),
-            
-            # Mobile Navigation (Collapsed)
-            html.Div(
-                [
-                    html.Div(
-                        [
-                            html.Div(
-                                [
-                                    html.I(className="fas fa-home"),
-                                    html.Span("Home")
-                                ],
-                                className="menu-item active"
-                            ),
-                            html.Div(
-                                [
-                                    html.I(className="fas fa-search"),
-                                    html.Span("Search")
-                                ],
-                                className="menu-item"
-                            ),
-                            html.Div(
-                                [
-                                    html.I(className="fas fa-book"),
-                                    html.Span("Your Library")
-                                ],
-                                className="menu-item"
-                            )
-                        ],
-                        className="mobile-menu"
-                    )
-                ],
-                className="collapse navbar-collapse d-md-none",
-                id="navbarNav"
             ),
             
             # Content Container
@@ -312,8 +277,8 @@ app.layout = html.Div([
                                                     ],
                                                     value='song',
                                                     className="custom-radio",
-                                                    label_style={"margin-right": "15px", "color": "#FFFFFF"},  # Correct property for label styling
-                                                    input_style={"margin-right": "5px"}  # Correct property for input styling
+                                                    label_style={"margin-right": "15px", "color": "#FFFFFF"},
+                                                    input_style={"margin-right": "5px"}
                                                 )
                                             ],
                                             className="control-group", id="search"
@@ -334,84 +299,77 @@ app.layout = html.Div([
                                             className="control-group"
                                         ),
                                         
-                                        # Date Range
-                                        html.Div(
-                                            [
-                                                html.Label("Date Range:", className="control-label"),
-                                                dbc.Row(
-                                                    [
-                                                        dbc.Col(
-                                                            dcc.DatePickerSingle(
-                                                                id='start-date',
-                                                                min_date_allowed=df['snapshot_date'].min(),
-                                                                max_date_allowed=df['snapshot_date'].max(),
-                                                                initial_visible_month=df['snapshot_date'].min(),
-                                                                date=df['snapshot_date'].min(),
-                                                                display_format='YYYY-MM-DD'
-                                                            ),
-                                                            width=5
-                                                        ),
-                                                        
-                                                        # Adding "to" between the start and end dates
-                                                        dbc.Col(
-                                                            html.Div(
-                                                                "to",
-                                                                className="control-label text-green"
-                                                            ),
-                                                            width=2,
-                                                            className="d-flex justify-content-center align-items-center"
-                                                        ),
-                                                        
-                                                        dbc.Col(
-                                                            dcc.DatePickerSingle(
-                                                                id='end-date',
-                                                                min_date_allowed=df['snapshot_date'].min(),
-                                                                max_date_allowed=df['snapshot_date'].max(),
-                                                                initial_visible_month=df['snapshot_date'].max(),
-                                                                date=df['snapshot_date'].max(),
-                                                                display_format='YYYY-MM-DD'
-                                                            ),
-                                                            width=5
-                                                        )
-                                                    ]
-                                                )
-                                            ],
-                                            className="control-group"
+                                         # Date Range
+                                                                                html.Div(
+                                                                                    [
+                                                                                        html.Label("Date Range:", className="control-label"),
+                                                                                        dbc.Row(
+                                                                                            [
+                                                                                                dbc.Col(
+                                                                                                    dcc.DatePickerSingle(
+                                                                                                        id='start-date',
+                                                                                                        min_date_allowed=pd.to_datetime("2024-05-25"),
+                                                                                                        max_date_allowed=pd.to_datetime("2025-03-20"),
+                                                                                                        initial_visible_month=pd.to_datetime("2024-05-25"),
+                                                                                                        date=pd.to_datetime("2024-05-25"),
+                                                                                                        display_format='YYYY-MM-DD'
+                                                                                                    ),
+                                                                                                    width=5
+                                                                                                ),
+                                                                                                dbc.Col(
+                                                                                                    html.Div(
+                                                                                                        "to",
+                                                                                                        className="control-label text-green"
+                                                                                                    ),
+                                                                                                    width=2,
+                                                                                                    className="d-flex justify-content-center align-items-center"
+                                                                                                ),
+                                                                                                dbc.Col(
+                                                                                                    dcc.DatePickerSingle(
+                                                                                                        id='end-date',
+                                                                                                        min_date_allowed=pd.to_datetime("2024-05-25"),
+                                                                                                        max_date_allowed=pd.to_datetime("2025-03-20"),
+                                                                                                        initial_visible_month=pd.to_datetime("2025-03-20"),
+                                                                                                        date=pd.to_datetime("2025-03-20"),
+                                                                                                        display_format='YYYY-MM-DD'
+                                                                                                    ),
+                                                                                                    width=5
+                                                                                                )
+                                                                                            ]
+                                                                                        )
+                                                                                    ],
+                                                                                    className="control-group"
+                                                                                ),
+                                                                            ],
+                                                                            className="content-section"
+                                                                        ),
+                                                                        width=12, md=4
+                                                                    ),  # Visualizations Column
+                            dbc.Col(
+                                html.Div(
+                                    [
+                                        html.H4("Instructions for Using the Visualizations"),
+                                        html.P(
+                                            "1. View Type Selection: Choose whether you want to analyze data by **Song** or **Artist**. "
+                                            "Select your preference using the radio buttons."
+                                        ),
+                                        html.P(
+                                            "2. Entity Selection: After selecting the view type, choose a specific song or artist from the dropdown. "
+                                            "The options will update based on your selection."
+                                        ),
+                                        html.P(
+                                            "3. Date Range Selection: Use the date pickers to filter the data by a specific date range. "
+                                            "Make sure the selected dates are within the available data range."
+                                        ),
+                                        html.P(
+                                            "4. Visualizations Update: The visualizations will automatically update based on your selections. "
+                                            "You will see a choropleth map showing global music popularity and a line chart displaying the popularity trend over time."
                                         ),
                                     ],
-                                    className="content-section"
+                                    className="content-section",
+                                    style={"marginBottom": "20px"}
                                 ),
-                                width=12, md=4
-                            ),
-                            
-                            # Visualizations Column
-                            dbc.Col(
-                            # Instructions for Using the Visualizations
-                            html.Div(
-                                [
-                                    html.H4("Instructions for Using the Visualizations"),
-                                    html.P(
-                                        "1. View Type Selection: Choose whether you want to analyze data by **Song** or **Artist**. "
-                                        "Select your preference using the radio buttons."
-                                    ),
-                                    html.P(
-                                        "2. Entity Selection: After selecting the view type, choose a specific song or artist from the dropdown. "
-                                        "The options will update based on your selection."
-                                    ),
-                                    html.P(
-                                        "3. Date Range Selection: Use the date pickers to filter the data by a specific date range. "
-                                        "Make sure the selected dates are within the available data range."
-                                    ),
-                                    html.P(
-                                        "4. Visualizations Update: The visualizations will automatically update based on your selections. "
-                                        "You will see a choropleth map showing global music popularity and a line chart displaying the popularity trend over time."
-                                    ),
-                                   
-                                ],
-                                className="content-section",
-                                style={"marginBottom": "20px"}
-                            ),
-                            width="auto", md=8
+                                width="auto", md=8
                             ),
 
                             dbc.Row(
@@ -420,14 +378,14 @@ app.layout = html.Div([
                                     html.Div(
                                         [
                                             html.P("In 2024–2025, music spreads faster than ever—thanks to TikTok, Spotify, and global streaming. But what’s trending in one region might not even make waves in another. "
-"Studying music popularity by region helps us understand cultural preferences, emerging local trends, and how global hits travel. It shows us how music connects the world—one region at a time. "
-"To see the full story of music today, we need to hear it from everywhere.",
-                                                     className="chart-description"),
+                                                    "Studying music popularity by region helps us understand cultural preferences, emerging local trends, and how global hits travel. It shows us how music connects the world—one region at a time. "
+                                                    "To see the full story of music today, we need to hear it from everywhere.",
+                                                    className="chart-description"),
                                             # Map Title
                                             html.H4("Global Music Popularity by Region", id="region"),
                                             dcc.Graph(id='choropleth-map', className="visualization-container"),
                                             html.P(
-"The choropleth map displays global music popularity by country for the years 2024–2025, using a color gradient to represent average popularity scores. Countries are shaded from dark blue to bright yellow, where dark blue indicates lower popularity scores (around 25) and yellow represents higher scores (above 50). This visual highlights regional differences in music engagement, offering insights into where music is most popular across the world during this period.",
+                                                "The choropleth map displays global music popularity by country for the years 2024–2025, using a color gradient to represent average popularity scores. Countries are shaded from dark blue to bright yellow, where dark blue indicates lower popularity scores (around 25) and yellow represents higher scores (above 50). This visual highlights regional differences in music engagement, offering insights into where music is most popular across the world during this period.",
                                                 className="chart-description"
                                             )
                                         ],
@@ -437,10 +395,10 @@ app.layout = html.Div([
                                     # Line Chart
                                     html.Div(
                                         [
-html.P("""Music trends change fast. Studying popularity over time helps us understand how listener tastes evolve, which songs have lasting impact, and how tech and culture shape what we hear.
-Studying music popularity by region helps us understand cultural preferences, emerging local trends, and how global hits travel. It shows us how music connects the world—one region at a time.
-To see the full story of music today, we need to hear it from everywhere.""",
-       className="chart-description"),
+                                            html.P("""Music trends change fast. Studying popularity over time helps us understand how listener tastes evolve, which songs have lasting impact, and how tech and culture shape what we hear.
+                                            Studying music popularity by region helps us understand cultural preferences, emerging local trends, and how global hits travel. It shows us how music connects the world—one region at a time.
+                                            To see the full story of music today, we need to hear it from everywhere.""",
+                                            className="chart-description"),
                                             html.H4("Popularity Trend Over Time", id="popularity"),
                                             dcc.Graph(id='line-chart', className="visualization-container"),
                                             html.P(
@@ -491,8 +449,8 @@ To see the full story of music today, we need to hear it from everywhere.""",
                             # Scatter Plot
                             html.Div(
                                 [
-html.P("""Imagine you're a music detective with a scatterplot as your tool. Each point on the plot represents a song, with features like tempo on one axis and energy on the other. As you zoom in, you see clusters forming—high-energy songs are grouped together, and slower ones have their own space. The scatterplot helps you spot trends, like which audio features make songs more popular, and predict which tracks might be the next big hit. It's your map to cracking the code of music popularity!""",
-       className="chart-description"),
+                                    html.P("""Imagine you're a music detective with a scatterplot as your tool. Each point on the plot represents a song, with features like tempo on one axis and energy on the other. As you zoom in, you see clusters forming—high-energy songs are grouped together, and slower ones have their own space. The scatterplot helps you spot trends, like which audio features make songs more popular, and predict which tracks might be the next big hit. It's your map to cracking the code of music popularity!""",
+                                    className="chart-description"),
 
                                     html.H4("Song Popularity vs. Audio Features", id="scatter"),
                                     dbc.Row(
@@ -541,7 +499,7 @@ html.P("""Imagine you're a music detective with a scatterplot as your tool. Each
         className="main-content"
     ),
 
-    # About US
+    # About Us
     html.Div(
         [
             html.H2("About the Developers", style={
@@ -610,7 +568,7 @@ html.P("""Imagine you're a music detective with a scatterplot as your tool. Each
     )
 ])
 
-# Callback functions (same as before)
+# Callback functions
 @app.callback(
     Output('entity-dropdown', 'options'),
     Output('entity-dropdown', 'value'),
@@ -635,6 +593,7 @@ def update_dropdown(view_type):
     Input('start-date', 'date'),
     Input('end-date', 'date')
 )
+@cache.memoize(timeout=60)  # Cache the results for 60 seconds
 def update_visuals(view, entity, start_date, end_date):
     """
     Update the choropleth map and line chart based on the selected view, entity, and date range.
